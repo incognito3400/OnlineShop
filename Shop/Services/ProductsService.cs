@@ -51,11 +51,11 @@ namespace Shop.Services
 
         public IEnumerable<Product> GetProductsByFilter(string? name, decimal? minPrice, decimal? maxPrice, int? categoryId)
         {
-            var query = _context.Products.Include(p => p.Category).Include(p => p.Details).AsQueryable();
+            var query = _context.Products.Include(p => p.Category).AsQueryable();
 
             if (!string.IsNullOrEmpty(name))
             {
-                query = query.Where(p => p.Name.Contains(name));
+                query = query.Where(p => p.Name.ToLower().Contains(name.ToLower()));
             }
             if (minPrice.HasValue)
             {
@@ -71,6 +71,48 @@ namespace Shop.Services
             }
 
             return query.ToList();
+        }
+
+        public IEnumerable<Product> GetPromotionalProducts()
+        {
+            return _context.Products
+                .Include(p => p.Category)
+                .Where(p => p.OldPrice != null && p.OldPrice > p.Price)
+                .ToList();
+        }
+
+        public IEnumerable<Product> GetNewProducts(int count)
+        {
+            return _context.Products
+                .Include(p => p.Category)
+                .OrderByDescending(p => p.CreatedAt)
+                .Take(count)
+                .ToList();
+        }
+
+        public IEnumerable<Product> GetPopularProducts(int count)
+        {
+            // Logic: Return products most found in OrderItems
+            // If no orders yet, random or top rated. For MVP: Random or OrderItems count.
+             var popularIds = _context.OrderItems
+                .GroupBy(oi => oi.ProductId)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .Take(count)
+                .ToList();
+
+            if (!popularIds.Any())
+            {
+                return _context.Products.Include(p => p.Category).Take(count).ToList();
+            }
+
+            var products = _context.Products
+                .Include(p => p.Category)
+                .Where(p => popularIds.Contains(p.Id))
+                .ToList();
+            
+            // Restore order
+            return popularIds.Select(id => products.FirstOrDefault(p => p.Id == id)).Where(p => p != null).ToList()!;
         }
     }
 }

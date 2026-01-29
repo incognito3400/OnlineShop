@@ -5,12 +5,15 @@ namespace Shop.Interfaces
     public interface IProductsService
     {
         IEnumerable<Product> GetAllProducts();
-        Product GetProductById(int id);
+        Product? GetProductById(int id);
         void AddProduct(Product product);
         void UpdateProduct(Product product);
         void DeleteProduct(int id);
 
         IEnumerable<Product> GetProductsByFilter(string? name, decimal? minPrice, decimal? maxPrice, int? categoryId);
-
+        
+        IEnumerable<Product> GetPromotionalProducts();
+        IEnumerable<Product> GetNewProducts(int count);
+        IEnumerable<Product> GetPopularProducts(int count);
     }
 }
