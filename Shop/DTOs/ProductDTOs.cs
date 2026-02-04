@@ -28,6 +28,26 @@ namespace Shop.DTOs
         public List<ProductDetailDto> Details { get; set; } = new();
     }
 
+    public class GetProductsResponse
+    {
+        public IEnumerable<ProductDto> Products { get; set; } = new List<ProductDto>();
+    }
+
+    public class GetNewProductsResponse
+    {
+        public IEnumerable<ProductDto> Products { get; set; } = new List<ProductDto>();
+    }
+
+    public class GetPopularProductsResponse
+    {
+        public IEnumerable<ProductDto> Products { get; set; } = new List<ProductDto>();
+    }
+
+    public class GetPromotionalProductsResponse
+    {
+        public IEnumerable<ProductDto> Products { get; set; } = new List<ProductDto>();
+    }
+
     // Admin Requests
     public class CreateProductRequest
     {

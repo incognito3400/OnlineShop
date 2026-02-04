@@ -3,6 +3,7 @@ using Exam2.Backend.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Shop.DTOs;
 using Shop.Interfaces;
+using Shop.Mappings;
 
 namespace Shop.Controllers
 {
@@ -23,20 +24,7 @@ namespace Shop.Controllers
             var product = _productsService.GetProductById(id);
             if (product == null) return NotFound();
 
-            return Ok(new GetProductByIdResponse
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Price = product.Price,
-                OldPrice = product.OldPrice,
-                ImageUrl = product.ImageUrl,
-                StockQuantity = product.StockQuantity,
-                CategoryId = product.CategoryId,
-                CategoryName = product.Category?.Name,
-                CreatedAt = product.CreatedAt,
-                Description = product.Description,
-                Details = product.Details.Select(d => new ProductDetailDto { Key = d.Key, Value = d.Value }).ToList()
-            });
+            return Ok(product.ToDetailDto());
         }
 
         [HttpPost]
@@ -60,8 +48,7 @@ namespace Shop.Controllers
             string imageUrl = "/images/default.jpg";
             if (request.Image != null)
             {
-                // In a real app, save file to disk/cloud.
-                // For MVP, verify filename or size, but we'll mock the URL.
+                // In a real app, save the file to disk or cloud storage
                 imageUrl = $"/images/{request.Image.FileName}"; 
             }
 
@@ -88,18 +75,8 @@ namespace Shop.Controllers
 
             _productsService.AddProduct(product);
 
-            // Fetch created product to return full DTO (though ID is available on product object)
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Price = product.Price,
-                OldPrice = product.OldPrice,
-                ImageUrl = product.ImageUrl,
-                StockQuantity = product.StockQuantity,
-                CategoryId = product.CategoryId,
-                CreatedAt = product.CreatedAt
-            });
+            // Fetch created product to return full DTO 
+            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product.ToDto());
         }
 
         [HttpPut]
@@ -121,12 +98,6 @@ namespace Shop.Controllers
             }
 
             // Update Details
-            // Naive approach: Clear and Add New (EF Core will handle if configured creating new rows, 
-            // but we need to be careful about orphans if we just clear the list in validation.
-            // Service handles database update, but we need to modify the entity collection here.
-            
-            // NOTE: Directly modifying the collection and saving via UpdateProduct might work if cascade delete is on.
-            // Better to let EF Core track changes.
             existing.Details.Clear(); // Only works if loaded into memory (Include in GetById does this)
             if (request.Details != null)
             {
@@ -143,17 +114,7 @@ namespace Shop.Controllers
 
             _productsService.UpdateProduct(existing);
 
-            return Ok(new ProductDto
-            {
-                Id = existing.Id,
-                Name = existing.Name,
-                Price = existing.Price,
-                OldPrice = existing.OldPrice,
-                ImageUrl = existing.ImageUrl,
-                StockQuantity = existing.StockQuantity,
-                CategoryId = existing.CategoryId,
-                CreatedAt = existing.CreatedAt
-            });
+            return Ok(existing.ToDto());
         }
 
         [HttpDelete("{id}")]
