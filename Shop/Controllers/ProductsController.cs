@@ -1,4 +1,3 @@
-using Exam2.Backend.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Shop.DTOs;
 using Shop.Interfaces;
@@ -11,18 +10,31 @@ namespace Shop.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductsService _productsService;
-        private readonly ICategoriesService _categoriesService;
 
-        public ProductsController(IProductsService productsService, ICategoriesService categoriesService)
+        public ProductsController(IProductsService productsService)
         {
             _productsService = productsService;
-            _categoriesService = categoriesService;
         }
 
         [HttpGet]
-        public ActionResult<GetProductsResponse> GetAll()
+        public ActionResult<GetProductsResponse> GetAll(
+            [FromQuery] int? categoryId,
+            [FromQuery] string? search,
+            [FromQuery] string? sort)
         {
-            var products = _productsService.GetAllProducts();
+            var products = _productsService.GetProductsByFilter(search, null, null, categoryId);
+
+            if (!string.IsNullOrWhiteSpace(sort))
+            {
+                products = sort.ToLowerInvariant() switch
+                {
+                    "priceasc" => products.OrderBy(p => p.Price),
+                    "pricedesc" => products.OrderByDescending(p => p.Price),
+                    "new" => products.OrderByDescending(p => p.CreatedAt),
+                    _ => products
+                };
+            }
+
             return Ok(new GetProductsResponse
             {
                 Products = products.Select(p => p.ToDto())
@@ -48,14 +60,20 @@ namespace Shop.Controllers
             });
         }
 
-        [HttpGet("promotional")]
-        public ActionResult<GetPromotionalProductsResponse> GetPromotional()
+        [HttpGet("promotions")]
+        public ActionResult<GetPromotionalProductsResponse> GetPromotions()
         {
             var products = _productsService.GetPromotionalProducts();
             return Ok(new GetPromotionalProductsResponse
             {
                 Products = products.Select(p => p.ToDto())
             });
+        }
+
+        [HttpGet("promotional")]
+        public ActionResult<GetPromotionalProductsResponse> GetPromotionalLegacy()
+        {
+            return GetPromotions();
         }
 
         [HttpGet("new")]
