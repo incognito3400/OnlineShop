@@ -1,4 +1,4 @@
-# Shop Project - Complete Analysis (Verified)
+ï»¿# Shop Project - Complete Analysis (Verified)
 
 ## 1) Project Overview
 - **Path**: `D:\Shag\apps\exam3\Shop`
@@ -26,50 +26,51 @@ Note: SQL Server provider is installed but current runtime config uses SQLite on
 
 ```text
 Shop/
-+-- Controllers/
-¦   +-- AdminProductsController.cs
-¦   +-- AuthController.cs
-¦   +-- CategoriesController.cs
-¦   +-- OrdersController.cs
-¦   +-- ProductsController.cs
-¦   L-- UsersController.cs
-+-- Database/
-¦   +-- ApplicationDbContext.cs
-¦   L-- DbInitializer.cs
-+-- DTOs/
-¦   +-- CategoryDTOs.cs
-¦   +-- OrderDTOs.cs
-¦   +-- ProductDTOs.cs
-¦   L-- UserDTOs.cs
-+-- Entities/
-¦   +-- Category.cs
-¦   +-- Order.cs
-¦   +-- OrderItem.cs
-¦   +-- Product.cs
-¦   +-- ProductDetail.cs
-¦   L-- User.cs
-+-- Interfaces/
-¦   +-- ICategoriesService.cs
-¦   +-- IOrdersService.cs
-¦   +-- IProductsService.cs
-¦   L-- IUsersService.cs
-+-- Mappings/
-¦   +-- CategoryMapper.cs
-¦   +-- OrderMapper.cs
-¦   +-- ProductMapper.cs
-¦   L-- UserMapper.cs
-+-- Services/
-¦   +-- CategoriesService.cs
-¦   +-- OrdersService.cs
-¦   +-- ProductsService.cs
-¦   L-- UsersService.cs
-+-- Properties/
-¦   L-- launchSettings.json
-+-- appsettings.Development.json
-+-- appsettings.json
-+-- Program.cs
-+-- Shop.csproj
-L-- shop.db
+|- Controllers/
+|  |- AdminProductsController.cs
+|  |- AuthController.cs
+|  |- CategoriesController.cs
+|  |- OrdersController.cs
+|  |- ProductsController.cs
+|  `- UsersController.cs
+|- Database/
+|  |- ApplicationDbContext.cs
+|  `- DbInitializer.cs
+|- DTOs/
+|  |- CategoryDTOs.cs
+|  |- OrderDTOs.cs
+|  |- ProductDTOs.cs
+|  `- UserDTOs.cs
+|- Entities/
+|  |- Category.cs
+|  |- Order.cs
+|  |- OrderItem.cs
+|  |- Product.cs
+|  |- ProductDetail.cs
+|  `- User.cs
+|- Interfaces/
+|  |- ICategoriesService.cs
+|  |- IOrdersService.cs
+|  |- IProductsService.cs
+|  `- IUsersService.cs
+|- Mappings/
+|  |- CategoryMapper.cs
+|  |- OrderMapper.cs
+|  |- ProductMapper.cs
+|  `- UserMapper.cs
+|- Services/
+|  |- CategoriesService.cs
+|  |- OrdersService.cs
+|  |- ProductsService.cs
+|  `- UsersService.cs
+|- Properties/
+|  `- launchSettings.json
+|- appsettings.Development.json
+|- appsettings.json
+|- Program.cs
+|- PROJECT_ANALYSIS.md
+|- Shop.csproj
+`- shop.db
 ```
 
 Build artifacts (`bin/`, `obj/`) are present but excluded from architecture analysis.
@@ -126,10 +127,11 @@ Notable behavior:
 ## 9) Controllers and API Endpoints (Verified)
 
 ### `ProductsController` (`/api/products`)
-- `GET /api/products`
+- `GET /api/products?categoryId=...&search=...&sort=...`
 - `GET /api/products/{id}`
 - `GET /api/products/filter`
-- `GET /api/products/promotional`
+- `GET /api/products/promotions`
+- `GET /api/products/promotional` (legacy alias)
 - `GET /api/products/new?count=10`
 - `GET /api/products/popular?count=10`
 
@@ -195,11 +197,10 @@ Current state (critical):
 ## 13) Code Quality and Design Risks
 - Namespace mismatch (`Exam2.Backend` vs `Shop`) hurts maintainability.
 - Dead/unused component: `DbInitializer`.
-- `ProductsController` injects `ICategoriesService` but does not use it.
 - Nullable contract inconsistency:
   - Interface: `Product? GetProductById(int id)`
   - Service impl returns `Product` with null-forgiving `!`.
-- No pagination/sorting on list endpoints.
+- No pagination on list endpoints; sorting is partial (`priceasc`, `pricedesc`, `new`) and undocumented as enum/contract.
 - No transaction or stock decrement logic on order creation.
 - No central exception handling middleware.
 - No tests found (unit/integration).
@@ -229,9 +230,4 @@ Current state (critical):
 6. Convert services/controllers to async EF methods.
 7. Add tests for auth, order creation totals, product filters.
 
-## 16) Final Verdict
-Your plan is **~85-90% accurate structurally**.
-Main gaps are not structure, but production-readiness and a few real mismatches (Orders DELETE route, namespace leftovers, seed issues, unused initializer).
 
----
-Generated from actual source audit of `D:\Shag\apps\exam3\Shop`.

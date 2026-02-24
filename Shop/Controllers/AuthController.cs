@@ -27,7 +27,7 @@ namespace Shop.Controllers
             var user = new User
             {
                 Email = request.Email,
-                PasswordHash = request.Password, // In real app, hash this!
+                PasswordHash = request.Password,
                 Role = "User"
             };
 
@@ -40,10 +40,10 @@ namespace Shop.Controllers
         public ActionResult<LoginResponse> Login([FromBody] LoginRequest request)
         {
             var user = _usersService.GetUserByEmail(request.Email);
-            if (user == null || user.PasswordHash != request.Password) // In real app, verify hash!
+            if (user == null || user.PasswordHash != request.Password) 
                 return Unauthorized();
-
-            var token = $"fake-jwt-token-{user.Id}"; // Simulation
+                // test 
+            var token = $"fake-jwt-token-{user.Id}"; 
             return Ok(user.ToLoginResponse(token));
         }
     }
