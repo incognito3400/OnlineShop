@@ -14,10 +14,15 @@ builder.Services.AddControllers(); // Add Controllers
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configure Cloudinary Settings
+builder.Services.Configure<Shop.Configuration.CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+
 builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
+builder.Services.AddScoped<IImageService, CloudinaryService>();
+
 
 var app = builder.Build();
 
@@ -33,6 +38,16 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await context.Database.EnsureCreatedAsync();
+
+    // TEMPORARY: Patch the existing database to add the ImageUrl to Users
+    try
+    {
+        await context.Database.ExecuteSqlRawAsync("ALTER TABLE Users ADD COLUMN ImageUrl TEXT NULL;");
+    }
+    catch
+    {
+        // Column might already exist, ignore error
+    }
 }
 
 app.MapControllers(); // Map Controllers

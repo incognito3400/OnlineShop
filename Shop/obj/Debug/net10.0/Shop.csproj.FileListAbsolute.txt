@@ -196,3 +196,10 @@ D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
 D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 D:\Shag\apps\exam3\Shop\obj\Debug\net10.0\Shop.MvcApplicationPartsAssemblyInfo.cs
+D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\xunit.abstractions.dll
+D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\xunit.runner.visualstudio.testadapter.dll
+D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\CloudinaryDotNet.dll
+D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\FluentAssertions.dll
+D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\xunit.assert.dll
+D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\xunit.core.dll
+D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\xunit.execution.dotnet.dll

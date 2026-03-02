@@ -12,10 +12,12 @@ namespace Shop.Controllers
     public class AdminProductsController : ControllerBase
     {
         private readonly IProductsService _productsService;
+        private readonly IImageService _imageService;
 
-        public AdminProductsController(IProductsService productsService)
+        public AdminProductsController(IProductsService productsService, IImageService imageService)
         {
             _productsService = productsService;
+            _imageService = imageService;
         }
 
         [HttpGet("{id}")]
@@ -28,7 +30,7 @@ namespace Shop.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ProductDto> Create([FromForm] CreateProductRequest request)
+        public async Task<ActionResult<ProductDto>> Create([FromForm] CreateProductRequest request)
         {
             // Parse Details JSON
             List<ProductDetailDto>? detailsDtos = null;
@@ -44,12 +46,11 @@ namespace Shop.Controllers
                 }
             }
 
-            // Handle Image (Simulation)
+            // Handle Image (Cloudinary)
             string imageUrl = "/images/default.jpg";
             if (request.Image != null)
             {
-                // In a real app, save the file to disk or cloud storage
-                imageUrl = $"/images/{request.Image.FileName}"; 
+                imageUrl = await _imageService.UploadImageAsync(request.Image);
             }
 
             var product = new Product
@@ -80,7 +81,7 @@ namespace Shop.Controllers
         }
 
         [HttpPut]
-        public ActionResult<ProductDto> Update([FromBody] UpdateProductRequest request)
+        public async Task<ActionResult<ProductDto>> Update([FromForm] UpdateProductRequest request)
         {
             var existing = _productsService.GetProductById(request.Id);
             if (existing == null) return NotFound();
@@ -92,9 +93,9 @@ namespace Shop.Controllers
             existing.StockQuantity = request.StockQuantity;
             existing.CategoryId = request.CategoryId;
             
-            if (!string.IsNullOrEmpty(request.ImageUrl))
+            if (request.Image != null)
             {
-                existing.ImageUrl = request.ImageUrl;
+                existing.ImageUrl = await _imageService.UploadImageAsync(request.Image);
             }
 
             // Update Details

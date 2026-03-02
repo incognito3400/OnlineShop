@@ -70,7 +70,7 @@ namespace Shop.DTOs
         public decimal? OldPrice { get; set; }
         public int StockQuantity { get; set; }
         public int CategoryId { get; set; }
-        public string? ImageUrl { get; set; } // Keep existing or update
+        public Microsoft.AspNetCore.Http.IFormFile? Image { get; set; }
         public List<ProductDetailDto> Details { get; set; } = new();
     }
 }

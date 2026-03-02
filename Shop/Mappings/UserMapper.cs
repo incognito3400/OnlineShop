@@ -11,7 +11,8 @@ namespace Shop.Mappings
             {
                 Id = user.Id,
                 Email = user.Email,
-                Role = user.Role
+                Role = user.Role,
+                ImageUrl = user.ImageUrl
             };
         }
 
@@ -22,6 +23,7 @@ namespace Shop.Mappings
                 Id = user.Id,
                 Email = user.Email,
                 Role = user.Role,
+                ImageUrl = user.ImageUrl,
                 Token = token
             };
         }
