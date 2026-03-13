@@ -1,6 +1,5 @@
 using Exam2.Backend.Entities;
 using Microsoft.EntityFrameworkCore;
-
 namespace Exam2.Backend.Data;
 
 public class ApplicationDbContext : DbContext
@@ -20,14 +19,14 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         
-        // Product -> Details relation
+        // Product -> Details 
         modelBuilder.Entity<ProductDetail>()
             .HasOne(pd => pd.Product)
             .WithMany(p => p.Details)
             .HasForeignKey(pd => pd.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
             
-        // Order -> OrderItem relation
+        // Order -> OrderItem 
         modelBuilder.Entity<OrderItem>()
             .HasOne(oi => oi.Order)
             .WithMany(o => o.Items)
