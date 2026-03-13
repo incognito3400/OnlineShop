@@ -44,7 +44,7 @@ namespace Shop.Controllers
         {
             var category = request.ToEntity();
             _categoriesService.AddCategory(category);
-            // In a real scenario we'd refetch to get ID, assuming AddCategory sets it
+            
             return CreatedAtAction(nameof(GetById), new { id = category.Id }, category.ToDto());
         }
 

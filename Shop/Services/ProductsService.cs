@@ -92,8 +92,8 @@ namespace Shop.Services
 
         public IEnumerable<Product> GetPopularProducts(int count)
         {
-            // Logic: Return products most found in OrderItems
-            // If no orders yet, random or top rated. For MVP: Random or OrderItems count.
+           
+           
              var popularIds = _context.OrderItems
                 .GroupBy(oi => oi.ProductId)
                 .OrderByDescending(g => g.Count())

@@ -3,6 +3,9 @@ using Exam2.Backend.Data;
 using Exam2.Backend.Entities;
 using Shop.Interfaces;
 using Shop.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,11 +13,34 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register Services
-builder.Services.AddControllers(); // Add Controllers
+builder.Services.AddControllers(); 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configure Cloudinary Settings
+//  JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? "SuperSecretKeyForJwtAuthenticationInThisApp");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+//  Cloudinary Settings
 builder.Services.Configure<Shop.Configuration.CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 builder.Services.AddScoped<IProductsService, ProductsService>();
@@ -26,7 +52,7 @@ builder.Services.AddScoped<IImageService, CloudinaryService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -39,16 +65,29 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await context.Database.EnsureCreatedAsync();
 
-    // TEMPORARY: Patch the existing database to add the ImageUrl to Users
-    try
+    var dbConnection = context.Database.GetDbConnection();
+    await dbConnection.OpenAsync();
+
+    var executeQuietly = async (string sql) =>
     {
-        await context.Database.ExecuteSqlRawAsync("ALTER TABLE Users ADD COLUMN ImageUrl TEXT NULL;");
-    }
-    catch
-    {
-        // Column might already exist, ignore error
-    }
+        try
+        {
+            using var command = dbConnection.CreateCommand();
+            command.CommandText = sql;
+            await command.ExecuteNonQueryAsync();
+        }
+        catch { }
+    };
+
+    await executeQuietly("ALTER TABLE Users ADD COLUMN ImageUrl TEXT NULL;");
+    await executeQuietly("ALTER TABLE Users ADD COLUMN RefreshToken TEXT NULL;");
+    await executeQuietly("ALTER TABLE Users ADD COLUMN RefreshTokenExpiryTime TEXT NULL;");
+
+    await dbConnection.CloseAsync();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers(); // Map Controllers
 

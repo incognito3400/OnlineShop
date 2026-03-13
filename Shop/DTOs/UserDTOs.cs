@@ -12,6 +12,13 @@ namespace Shop.DTOs
     public class LoginResponse : UserDto
     {
         public string Token { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
+    }
+
+    public class RefreshTokenRequest
+    {
+        public string Token { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
     }
 
     public class GetUsersResponse

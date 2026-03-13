@@ -42,7 +42,7 @@ namespace Shop.Controllers
                 }
                 catch
                 {
-                    // If parsing fails, ignore or return BadRequest. For now, assuming valid JSON or empty.
+                    
                 }
             }
 
@@ -76,12 +76,12 @@ namespace Shop.Controllers
 
             _productsService.AddProduct(product);
 
-            // Fetch created product to return full DTO 
+            
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, product.ToDto());
         }
 
         [HttpPut]
-        public async Task<ActionResult<ProductDto>> Update([FromForm] UpdateProductRequest request)
+        public ActionResult<ProductDto> Update([FromBody] UpdateProductRequest request)
         {
             var existing = _productsService.GetProductById(request.Id);
             if (existing == null) return NotFound();
@@ -93,13 +93,13 @@ namespace Shop.Controllers
             existing.StockQuantity = request.StockQuantity;
             existing.CategoryId = request.CategoryId;
             
-            if (request.Image != null)
+            if (!string.IsNullOrEmpty(request.ImageUrl))
             {
-                existing.ImageUrl = await _imageService.UploadImageAsync(request.Image);
+                existing.ImageUrl = request.ImageUrl;
             }
 
             // Update Details
-            existing.Details.Clear(); // Only works if loaded into memory (Include in GetById does this)
+            existing.Details.Clear(); 
             if (request.Details != null)
             {
                 foreach (var d in request.Details)

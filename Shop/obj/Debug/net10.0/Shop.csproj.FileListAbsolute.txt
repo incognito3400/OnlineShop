@@ -203,3 +203,5 @@ D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\FluentAssertions.dll
 D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\xunit.assert.dll
 D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\xunit.core.dll
 D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\xunit.execution.dotnet.dll
+D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Shag\apps\exam3\Shop\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll

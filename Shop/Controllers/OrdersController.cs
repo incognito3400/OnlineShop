@@ -75,12 +75,7 @@ namespace Shop.Controllers
                 }
             }
 
-            // Recalculate total amount logic usually resides in service, but we'll leave it as implied or handled by service. 
-            // In the previous Program.cs logic, it just added items. 
-            // Let's assume CreateOrder calculates Total or we need to sum it up if not handled.
-            // Looking at Program.cs earlier: it didn't sum it up explicitly in the snippet shown, 
-            // but usually Order entity might ideally have logic or Service does. 
-            // However, for strict mapping:
+            
             _ordersService.CreateOrder(order);
 
             return CreatedAtAction(nameof(GetById), new { id = order.Id }, order.ToCreateResponse());

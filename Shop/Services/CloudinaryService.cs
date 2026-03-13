@@ -32,7 +32,7 @@ namespace Shop.Services
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.FileName, stream),
-                    // Optimization
+                    
                     Transformation = new Transformation().FetchFormat("auto").Quality("auto")
                 };
                 
