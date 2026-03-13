@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Shop",
+    "\\Shop\\Controllers",
+    "\\Shop\\Database",
+    "\\Shop\\Entities",
+    "\\Shop\\Interfaces",
+    "\\Shop\\Mappings",
+    "\\Shop\\Migrations",
+    "\\Shop\\Services"
+  ],
+  "SelectedNode": "\\Shop",
+  "PreviewInSolutionExplorer": false
+}

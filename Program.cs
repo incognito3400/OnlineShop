@@ -30,14 +30,14 @@ builder.Services.AddScoped<IOrdersService, OrdersService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// 2. Включаем middleware для CORS (строго ДО app.MapControllers)
+
 app.UseCors("AllowAll");
 
 // Ensure database is created
